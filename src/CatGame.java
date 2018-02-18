@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import javax.imageio.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 
 public class CatGame extends JFrame {
@@ -37,6 +39,18 @@ public class CatGame extends JFrame {
         game_window.setResizable (false);
         last_frame = System.nanoTime();
         GameField game_field = new GameField();
+        game_field.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                int x = e.getX();
+                int y = e.getY();
+                boolean is_click = y >=10 && y <= 180 && x >= 220 && x <= 400;
+                if (is_click){
+                    cat_live = 350;
+                }
+            }
+        });
         game_window.add(game_field);
         game_window.setVisible(true);
     }
