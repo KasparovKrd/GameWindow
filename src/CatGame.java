@@ -11,7 +11,7 @@ public class CatGame extends JFrame {
     private static long last_frame;
     private static Image background;
     private static Image cat;
-    private static Image food;
+    private static Image button;
     private static Image good;
     private static Image plate;
     private static Image game_over;
@@ -24,7 +24,7 @@ public class CatGame extends JFrame {
         try {
             background = ImageIO.read(CatGame.class.getResourceAsStream("back.jpg"));
             cat = ImageIO.read(CatGame.class.getResourceAsStream("bad.png"));
-            food = ImageIO.read(CatGame.class.getResourceAsStream("button.png"));
+            button = ImageIO.read(CatGame.class.getResourceAsStream("button.png"));
             good = ImageIO.read(CatGame.class.getResourceAsStream("good.png"));
             game_over = ImageIO.read(CatGame.class.getResourceAsStream("game_over.png"));
             game_over2 = ImageIO.read(CatGame.class.getResourceAsStream("game_over2.png"));
@@ -50,7 +50,7 @@ public class CatGame extends JFrame {
                 super.mousePressed(e);
                 int x = e.getX();
                 int y = e.getY();
-                boolean is_click = y >=10 && y <= 180 && x >= 220 && x <= 400;
+                boolean is_click = y >=100 && y <= 200 && x >= 230 && x <= 484;
                 if (is_click){
                     cat.eat(plate);
                 }
@@ -68,9 +68,9 @@ public class CatGame extends JFrame {
         Cat.cat_live = Cat.cat_live - speed*delta_time ;
         g.drawImage(background, 0, 0, null);
         g.drawImage(plate, 200, 180, null);
-        g.drawImage(food, 200,0, null);
+        g.drawImage(button, 230,100, null);
         if (Cat.cat_live>= 100) {
-            g.drawImage(good, 770, 110, null);
+            g.drawImage(good, 770, 100, null);
             g.setColor(new Color(120, 255, 70));
             g.fillRect(800, 500, (int) Cat.cat_live, 30);
         } else if(Cat.cat_live>= 0) {
@@ -80,7 +80,6 @@ public class CatGame extends JFrame {
         }
 
         if (Plate.food>= 100) {
-
             g.setColor(new Color(120, 255, 70));
             g.fillRect(200, 500, (int) Plate.food, 30);
         } else if(Plate.food>= 0) {
@@ -109,6 +108,7 @@ class Cat {
     private String name;
     private int appetite =  50;
     static float cat_live = 350;
+    int h = (int)cat_live;
 
     Cat(String name, int appetite) {
         this.name = name;
@@ -120,7 +120,10 @@ class Cat {
     }
 
     void eat(Plate plate) {
+        if(Plate.food>0 && cat_live <= 300){
         plate.dicreaseFood(appetite);
+        cat_live = cat_live + appetite;
+        }
     }
 }
 
