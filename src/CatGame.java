@@ -13,9 +13,9 @@ public class CatGame extends JFrame {
     private static Image cat;
     private static Image food;
     private static Image good;
+    private static Image plate;
     private static Image game_over;
     private static Image game_over2;
-    private static float cat_live = 350;
     private static float speed = 20;
 
 
@@ -24,13 +24,18 @@ public class CatGame extends JFrame {
         try {
             background = ImageIO.read(CatGame.class.getResourceAsStream("back.jpg"));
             cat = ImageIO.read(CatGame.class.getResourceAsStream("bad.png"));
-            food = ImageIO.read(CatGame.class.getResourceAsStream("food.png"));
+            food = ImageIO.read(CatGame.class.getResourceAsStream("button.png"));
             good = ImageIO.read(CatGame.class.getResourceAsStream("good.png"));
             game_over = ImageIO.read(CatGame.class.getResourceAsStream("game_over.png"));
             game_over2 = ImageIO.read(CatGame.class.getResourceAsStream("game_over2.png"));
+            plate = ImageIO.read(CatGame.class.getResourceAsStream("plate1.png"));
         } catch (IOException exc){
             System.out.println("Неверное расплоложение фаилов");
         }
+
+        Cat cat = new Cat("Barsik", 50);
+        Plate plate = new Plate(300);
+
 
         game_window = new CatGame();
         game_window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -47,7 +52,7 @@ public class CatGame extends JFrame {
                 int y = e.getY();
                 boolean is_click = y >=10 && y <= 180 && x >= 220 && x <= 400;
                 if (is_click){
-                    cat_live = 350;
+                    cat.eat(plate);
                 }
             }
         });
@@ -58,19 +63,29 @@ public class CatGame extends JFrame {
 
     private static void Render(Graphics g) {
         long current_time = System.nanoTime();
-        float delta_time = (current_time - last_frame)* 0.000000001f;
+        float delta_time =(current_time - last_frame)* 0.0000000010f;
         last_frame = current_time;
-        cat_live = cat_live - speed*delta_time;
+        Cat.cat_live = Cat.cat_live - speed*delta_time ;
         g.drawImage(background, 0, 0, null);
+        g.drawImage(plate, 200, 180, null);
         g.drawImage(food, 200,0, null);
-        if (cat_live>= 100) {
+        if (Cat.cat_live>= 100) {
             g.drawImage(good, 770, 110, null);
             g.setColor(new Color(120, 255, 70));
-            g.fillRect(800, 500, (int) cat_live, 30);
-        } else if(cat_live>= 0) {
+            g.fillRect(800, 500, (int) Cat.cat_live, 30);
+        } else if(Cat.cat_live>= 0) {
             g.drawImage(cat, 670, 0, null);
             g.setColor(new Color(255, 95, 90));
-            g.fillRect(800, 500, (int) cat_live, 30);
+            g.fillRect(800, 500, (int) Cat.cat_live, 30);
+        }
+
+        if (Plate.food>= 100) {
+
+            g.setColor(new Color(120, 255, 70));
+            g.fillRect(200, 500, (int) Plate.food, 30);
+        } else if(Plate.food>= 0) {
+            g.setColor(new Color(255, 95, 90));
+            g.fillRect(200, 500, (int) Plate.food, 30);
         }
     }
 
@@ -80,12 +95,43 @@ public class CatGame extends JFrame {
             super.paintComponent(g);
             Render(g);
             repaint();
-            if (cat_live<-1){
+            if (Cat.cat_live<-1){
                 g.drawImage(background, 0, 0, null);
                 g.drawImage(game_over, 100,30, null);               //Game over готов!!!
                 g.drawImage(game_over2, 620,100, null);
             }
         }
 
+    }
+}
+
+class Cat {
+    private String name;
+    private int appetite =  50;
+    static float cat_live = 350;
+
+    Cat(String name, int appetite) {
+        this.name = name;
+        this.appetite = appetite;
+    }
+
+    Cat(float cat_live) {
+        this.cat_live = cat_live;
+    }
+
+    void eat(Plate plate) {
+        plate.dicreaseFood(appetite);
+    }
+}
+
+class Plate {
+    static int food = 200;
+
+    Plate(int food) {
+        this.food = food;
+    }
+
+    void dicreaseFood(int food) {
+        this.food -= food;
     }
 }
